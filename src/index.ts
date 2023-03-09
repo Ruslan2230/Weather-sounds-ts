@@ -1,13 +1,7 @@
 import data from './data';
 import pauseIcon from './assets/icons/pause.svg';
 import './index.scss';
-
-type ButtonIten = {
-  id: string,
-  icon: string,
-  background: string,
-  sound: string,
-}
+import { IWeatherItem } from './types/IWeatherItem';
 
 let playingMusicId: string;
 const listButton = document.querySelector('.weather-list');
@@ -15,17 +9,17 @@ const listButton = document.querySelector('.weather-list');
 const audioElement = new Audio();
 audioElement.loop = true;
 
-const volume = document.querySelector('.volume-controller');
-volume.addEventListener('input', (event: Event ) => {
-  const target = event.currentTarget as HTMLInputElement;
-    audioElement.volume = +target.value / 100;
+const volume: HTMLInputElement = document.querySelector('.volume-controller');
+volume.addEventListener('input', (e) => {
+  const target = e.currentTarget as HTMLInputElement;
+  audioElement.volume = +target.value / 100;
 });
 
-listButton.addEventListener('click', (event: Event ) => {
-  const { target } = event;
+listButton.addEventListener('click', (e) => {
+  const target = e.target as HTMLElement;
 
-  const datasetElement = (target as HTMLButtonElement).closest('[data-item-id]') as HTMLElement
-  const targetId = datasetElement.dataset.itemId;
+  const closestTarget: HTMLElement = target.closest('[data-item-id]');
+  const targetId = closestTarget.dataset.itemId;
   if (!targetId) return;
 
   const item = data.find((i) => i.id === targetId);
@@ -34,9 +28,10 @@ listButton.addEventListener('click', (event: Event ) => {
   if (playingMusicId !== item.id) {
     const list = document.querySelectorAll('.weather-item__icon');
     list.forEach((element, idx) => {
-      const el = element as HTMLImageElement
+      const el = element as HTMLImageElement;
       el.src = data[idx].icon;
     });
+
     playingMusicId = item.id;
     audioElement.src = item.sound;
     audioElement.play();
@@ -47,17 +42,17 @@ listButton.addEventListener('click', (event: Event ) => {
   if (audioElement.paused) {
     audioElement.play();
     const t = target as HTMLElement;
-    const ImageElemrnt  = t.firstElementChild as HTMLImageElement;
+    const ImageElemrnt = t.firstElementChild as HTMLImageElement;
     ImageElemrnt.src = item.icon;
   } else {
     const t = target as HTMLElement;
-    const ImageElemrnt  = t.firstElementChild as HTMLImageElement;
+    const ImageElemrnt = t.firstElementChild as HTMLImageElement;
     ImageElemrnt.src = pauseIcon;
     audioElement.pause();
   }
 });
 
-function renderItem(item : ButtonIten) {
+function renderItem(item : IWeatherItem) {
   const listItem = document.createElement('li');
   const weatherItem = document.createElement('button');
   const itemIcon = document.createElement('img');

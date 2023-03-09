@@ -1,9 +1,18 @@
 module.exports = {
+  settings: {
+    'import/resolver': {
+      node: {
+        paths: ['src'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
+    },
+  },
   env: {
     browser: true,
     es2021: true,
   },
-  extends: 'airbnb-base',
+  extends: ['airbnb-base', 'plugin:@typescript-eslint/recommended'],
+  parser: '@typescript-eslint/parser',
   overrides: [
   ],
   parserOptions: {
@@ -11,8 +20,9 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-    'no-param-reassign': 0,
     'no-unused-vars': 0,
-    "linebreak-style": 0,
+    'import/extensions': 0,
+    '@typescript-eslint/no-var-requires': 0,
+    'linebreak-style': 0,
   },
 };

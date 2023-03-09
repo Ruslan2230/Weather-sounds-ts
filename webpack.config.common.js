@@ -1,13 +1,15 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CopyPlugin = require('copy-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const postcssPresetEnv = require('postcss-preset-env');
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
-  entry: './index.tsx',
+  entry: './index.ts',
   output: {
     filename: '[name].[contenthash].js',
+    assetModuleFilename: 'assets/[name][ext]',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
   },
@@ -31,6 +33,11 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.[tj]sx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
         test: /\.css$/i,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
@@ -43,7 +50,7 @@ module.exports = {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: [require('postcss-preset-env')],
+                plugins: [postcssPresetEnv()],
               },
             },
           },
@@ -53,24 +60,28 @@ module.exports = {
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
         type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[name][ext]',
+        },
       },
       {
-        test: /\.[tj]sx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/,
+        test: /\.(jpe?g|png|webp|gif)$/i,
+        type: 'asset/resource',
       },
       {
-        test: /\.mp3$/,
-        loader: 'file-loader',
-    },
-    {
-      test: /\.(png|svg|jpe?g|gif|jp2|webp)$/,
-      loader: 'file-loader',
-      options: {
-        name: '[name].[ext]',
+        test: /\.svg$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/icons/[name][ext]',
+        },
       },
-    }
+      {
+        test: /\.mp3$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/sounds/[name][ext]',
+        },
+      },
     ],
   },
-}
-
+};
